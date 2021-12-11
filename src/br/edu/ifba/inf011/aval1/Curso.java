@@ -135,6 +135,8 @@ public class Curso extends Produto{
 		this.livros = livros;
 	}
 	
+//	BEGIN: Métodos do MEMENTO
+//	Gera um snapshot
 	public Snapshot checkPoint() {
 		
 		this.dispararCheckSave(this.disciplinas);
@@ -146,26 +148,32 @@ public class Curso extends Produto{
 		);
 	}
 
+//	Restaura ao snap recebido
 	public void restore(Snapshot snapshot) {
 		snapshot.restore();
 		this.dispararCheckRestore(this.disciplinas);
 	}
+//	END
 	
+//	BEGIN: Métodos do OBSERVER
+//	Adiciona um OBSERVER ao vetor de observer
 	public void addObserver(ObserverIF observer) {
 		this.observers.add(observer); 
 		
 	}
-	
+
+//	Remove um OBSERVER ao vetor de observer
 	public void removeObserver(ObserverIF observer) {
 		this.observers.remove(observer); 
 	}
-	
+
+//	Notifica os observadores
 	public void dispararCheckSave(List<Disciplina> disciplinas) {
 
 		for(ObserverIF observer : this.observers) {
 			observer.notificarCheckSave(disciplinas);
 		}
-			
+//		END	
 		
 	}
 	
