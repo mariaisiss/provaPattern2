@@ -16,6 +16,7 @@ public class Disciplina extends Produto{
 	
 	public Disciplina(String codigo, String nome) {
 		super(codigo, nome);
+		this.pcCumprido = 0;
 	}
 	
 	public Disciplina(String codigo, String nome, 
@@ -65,10 +66,23 @@ public class Disciplina extends Produto{
 	public void avancar(double pctAvancar) {
 		if (pctAvancar > 0) {
 			this.pcCumprido = this.chTotal * pctAvancar + this.pcCumprido;
-			System.out.println("\nDisciplina '" + this.getNome() + "' avançada em " + (pctAvancar*100) + " porcento.");
 		} else {
 			System.out.println("Não é possível avançar. Percentual inválido.");
+			return;
 		}
+		
+		if (this.pcCumprido < 100)
+			System.out.println("Disciplina '" + this.getNome() + "' avançada em " + (pctAvancar*100) + " porcento.\n");
+		else
+			System.out.println("Disciplina '" + this.getNome() + "' avançada e CONCLUÍDA.\n");
+	}
+	
+	public boolean CheckConclusao() {
+		
+		if (this.pcCumprido < 100)
+			return false;
+		else
+			return true;
 	}
 	
 }

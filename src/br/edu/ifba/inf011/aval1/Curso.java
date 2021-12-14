@@ -2,6 +2,9 @@ package br.edu.ifba.inf011.aval1;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
+
+import br.edu.ifba.inf011.aval1.Curso.Snapshot;
 import br.edu.ifba.inf011.aval1.prototype.Prototipavel;	
 
 //CONCRETESUBJECT (Observer)
@@ -16,7 +19,7 @@ public class Curso extends Produto{
 		private String nomeSnap;
 		
 		//MEMENTO em um Memento
-		private Snapshot(	Curso curso,
+		public Snapshot(	Curso curso,
 							List<Disciplina> disciplinas,
 							List<Livro> livros,
 							String codigo,
@@ -38,7 +41,15 @@ public class Curso extends Produto{
 			this.nomeSnap = nome;
 		}
 		
-		private void restore() {
+		public List<Disciplina> getDisciplinasSnap() {
+			return disciplinasSnap;
+		}
+
+		public List<Livro> getLivrosSnap() {
+			return livrosSnap;
+		}
+
+		protected void restore() {
 			this.cursoSnap.setNome(nomeSnap);
 			this.cursoSnap.setCodigo(codigoSnap);
 			
@@ -60,9 +71,17 @@ public class Curso extends Produto{
 	}
 //	Fim do memento
 	
+//	Estrutura de registro dos snapshots
+	private Stack<Snapshot> checks = new Stack<Curso.Snapshot>();
+	
 	private List<Disciplina> disciplinas;
 	private List<Livro> livros;
+	
+//	OBSERVER estrutura
 	private List<ObserverIF> observers;
+	
+//	STATE variável
+	private CursoState state;
 	
 	private Curso(Curso curso) {
 		super(curso);
@@ -72,14 +91,20 @@ public class Curso extends Produto{
 		this.livros = new LinkedList<Livro>();
 		for(Livro l : curso.livros)
 			this.livros.add((Livro)l.prototipar());
+		
 		this.observers = new LinkedList<ObserverIF>();
+		this.state = new StateTypeEmAndamento();
+		this.checks = new Stack<Curso.Snapshot>();
 	}
 	
 	public Curso(String codigo, String nome) {
 		super(codigo, nome);
 		this.disciplinas = new LinkedList<Disciplina>();
 		this.livros = new LinkedList<Livro>();
+		
 		this.observers = new LinkedList<ObserverIF>();
+		this.state = new StateTypeEmAndamento();
+		this.checks = new Stack<Curso.Snapshot>();
 	}
 	
 	public Curso(String codigo, String nome, 
@@ -88,7 +113,10 @@ public class Curso extends Produto{
 		super(codigo, nome);
 		this.disciplinas = new LinkedList<Disciplina>(disciplinas);
 		this.livros = new LinkedList<Livro>(livros);
+		
 		this.observers = new LinkedList<ObserverIF>();
+		this.state = new StateTypeEmAndamento();
+		this.checks = new Stack<Curso.Snapshot>();
 	}	
 	
 	@Override
@@ -105,6 +133,10 @@ public class Curso extends Produto{
 		return new Curso(this);
 	}
 	
+	public Stack<Snapshot> getChecks() {
+		return checks;
+	}
+
 	public Disciplina getDisciplina(String nomeDisciplina) {
 		Disciplina disciplina = null;
 		
@@ -116,15 +148,18 @@ public class Curso extends Produto{
 		
 		return disciplina;
 	}
+	
+	public List<Disciplina> getListaDisciplinas() {
+		return disciplinas;
+	}
+	
+
+	public List<Livro> getListaLivros() {
+		return livros;
+	}
 
 	public void avancar(String nomeDisciplina, double pctAvancar) {
-		Disciplina disciplina = this.getDisciplina(nomeDisciplina);
-		
-		if(disciplina == null) {
-			System.out.println("Disciplina não encontrada");
-		} else {
-			disciplina.avancar(pctAvancar);
-		}
+		this.state.avancar(this, nomeDisciplina, pctAvancar);
 	}
 	
 	public void setDisciplinas(List<Disciplina> disciplinas) {
@@ -135,25 +170,45 @@ public class Curso extends Produto{
 		this.livros = livros;
 	}
 	
+	public int getCargaTodosCursos() {
+		int cargaTotal = 0;
+		
+		for(Disciplina disc : this.getListaDisciplinas()) {
+			cargaTotal += disc.getChTotal();
+		}
+		
+		return cargaTotal;
+	}
+	
 //	BEGIN: Métodos do MEMENTO
 //	Gera um snapshot
 	public Snapshot checkPoint() {
 		
-		this.dispararCheckSave(this.disciplinas);
-		return new Snapshot(this,
-								this.disciplinas,
-								this.livros,
-								this.getCodigo(),
-								this.getNome()
-		);
+		return this.state.checkpoint(this);
+//		this.dispararCheckSave(this.disciplinas);
+//		return new Snapshot(this,
+//								this.disciplinas,
+//								this.livros,
+//								this.getCodigo(),
+//								this.getNome()
+//		);
+	}
+	
+	public Snapshot checkPointQ3() {
+		Snapshot snapshot = this.state.checkpoint(this);
+		checks.push(snapshot);
+		return snapshot;
 	}
 
 //	Restaura ao snap recebido
-	public void restore(Snapshot snapshot) {
-		snapshot.restore();
-		this.dispararCheckRestore(this.disciplinas);
+	public void restore(Curso.Snapshot snapshot) {
+		this.state.restore(this, snapshot, this.disciplinas);
 	}
-//	END
+	
+	public void restoreQ3() {
+		Curso.Snapshot snapshot = this.checks.pop();
+		this.state.restore(this, snapshot, this.disciplinas);
+	}
 	
 //	BEGIN: Métodos do OBSERVER
 //	Adiciona um OBSERVER ao vetor de observer
@@ -173,8 +228,6 @@ public class Curso extends Produto{
 		for(ObserverIF observer : this.observers) {
 			observer.notificarCheckSave(disciplinas);
 		}
-//		END	
-		
 	}
 	
 	public void dispararCheckRestore(List<Disciplina> disciplinas) {
@@ -182,7 +235,28 @@ public class Curso extends Produto{
 		for(ObserverIF observer : this.observers) {
 			observer.notificarCheckRestore(disciplinas);
 		}
-			
 	}
-
+//	END
+	
+//	BEGIN: Métodos State
+	public void StateTo_EmAndamento(){
+		this.state = this.state.StateTo_EmAndamento();
+	}
+	
+	public void StateTo_Cancelar() {
+		this.state = this.state.StateTo_Cancelar(this);
+	}
+	
+	public void StateTo_Concluir() {
+		this.state = this.state.StateTo_Concluir(this);
+	}
+	
+	public void StateTo_Suspender() {
+		this.state = this.state.StateTo_Suspender();
+	}
+	
+	public String emitirCertificado() {
+		return this.state.emitirCertificado("Fred de Alguma coisa", this.getNome(), this.getCargaTodosCursos(), true);
+	}
+//	END
 }
