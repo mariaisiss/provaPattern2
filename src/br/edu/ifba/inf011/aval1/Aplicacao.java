@@ -1,12 +1,9 @@
 package br.edu.ifba.inf011.aval1;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Stack;
-
 import br.edu.ifba.inf011.aval1.Curso.Snapshot;
 import br.edu.ifba.inf011.aval1.builder.CursoBuilder;
-import br.edu.ifba.inf011.aval1.builder.EmentaBuilder;
 import br.edu.ifba.inf011.aval1.fm.ProdutoFactory;
 import br.edu.ifba.inf011.aval1.fm.TipoProduto;
 import br.edu.ifba.inf011.aval1.prototype.CatalogoCursos;
@@ -27,7 +24,7 @@ public class Aplicacao {
 								  .reset()
 								  .addDisciplina((Disciplina)prod03)
 								  .addLivro((Livro)prod01)
-								  .setNome("Padrıes Criacionais")
+								  .setNome("Padr√µes Criacionais")
 								  .setCodigo("CURSO_CRIALL")
 								  .addDisciplina((Disciplina)prod02)
 								  .build();
@@ -42,24 +39,24 @@ public class Aplicacao {
 		
 		Curso cursoB = CatalogoCursos.getCatalogo().recuperar("CURSO_CRIALL");
 		
-//		execuÁ„o
+//		execu√ß√£o
 		checks.push(cursoA.checkPoint());		
 		System.out.println("Percentual da disciplina " 	+ cursoA.getDisciplina("Factory Method").getNome()
-														+ " È igual a "
+														+ " √© igual a "
 														+ cursoA.getDisciplina("Factory Method").getPcCumprido() + ".\n");
 		
-//		avanÁando percentual da disciplina
+//		avan√ßando percentual da disciplina
 		cursoA.avancar("Factory Method", 0.05);
 		checks.push(cursoA.checkPoint());
 		
 		cursoA.avancar("Factory Method", 0.10);
 		
 		System.out.println("Percentual da disciplina " 	+ cursoA.getDisciplina("Factory Method").getNome()
-														+ " È igual a "
+														+ " √© igual a "
 														+ cursoA.getDisciplina("Factory Method").getPcCumprido() + ".\n");
 		cursoA.restore(checks.pop());
-		System.out.println("Percentual da disciplina apÛs restore do checkpoint " 	+ cursoA.getDisciplina("Factory Method").getNome()
-				+ " È igual a "
+		System.out.println("Percentual da disciplina ap√≥s restore do checkpoint " 	+ cursoA.getDisciplina("Factory Method").getNome()
+				+ " √© igual a "
 				+ cursoA.getDisciplina("Factory Method").getPcCumprido() +".\n");
 		
 	}	
@@ -76,7 +73,7 @@ private void rodarQ3() throws InstantiationException, IllegalAccessException, Cl
 								  .reset()
 								  .addDisciplina((Disciplina)prod03)
 								  .addLivro((Livro)prod01)
-								  .setNome("Padrıes Criacionais")
+								  .setNome("Padr√µes Criacionais")
 								  .setCodigo("CURSO_CRIALL")
 								  .addDisciplina((Disciplina)prod02)
 								  .build();
@@ -96,24 +93,24 @@ private void rodarQ3() throws InstantiationException, IllegalAccessException, Cl
 		cursoA.StateTo_EmAndamento();
 		
 		
-//		execuÁ„o
+//		execu√ß√£o
 		cursoA.checkPointQ3();	
 		System.out.println("Percentual da disciplina " 	+ cursoA.getDisciplina("Factory Method").getNome()
-														+ " È igual a "
+														+ " √© igual a "
 														+ cursoA.getDisciplina("Factory Method").getPcCumprido() + ".\n");
 		
-//		avanÁando percentual da disciplina
+//		avan√ßando percentual da disciplina
 		cursoA.avancar("Factory Method", 0.05);
 		cursoA.checkPointQ3();
 		
 		cursoA.avancar("Factory Method", 0.10);
 		
 		System.out.println("Percentual da disciplina " 	+ cursoA.getDisciplina("Factory Method").getNome()
-														+ " È igual a "
+														+ " √© igual a "
 														+ cursoA.getDisciplina("Factory Method").getPcCumprido() + ".\n");
 		cursoA.restoreQ3();
-		System.out.println("Percentual da disciplina apÛs restore do checkpoint " 	+ cursoA.getDisciplina("Factory Method").getNome()
-				+ " È igual a "
+		System.out.println("Percentual da disciplina ap√≥s restore do checkpoint " 	+ cursoA.getDisciplina("Factory Method").getNome()
+				+ " √© igual a "
 				+ cursoA.getDisciplina("Factory Method").getPcCumprido() +".\n");
 		
 		cursoA.avancar("Factory Method", 1);
