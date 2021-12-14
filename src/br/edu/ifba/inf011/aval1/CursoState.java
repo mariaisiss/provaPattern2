@@ -2,15 +2,17 @@ package br.edu.ifba.inf011.aval1;
 
 import java.util.List;
 
+// Declara m√©todos espec√≠ficos para os estados focando naqueles que tenham comportamento espec√≠fico ao estado
+
 public interface CursoState {
 	
-//	MÈtodos para mudanÁa de state
+//	M√©todos para mudan√ßa de state
 	public CursoState StateTo_EmAndamento();
 	public CursoState StateTo_Cancelar(Curso curso);
 	public CursoState StateTo_Concluir(Curso curso);
 	public CursoState StateTo_Suspender();
 
-//	MÈtodos de aÁ„o em STATE
+//	M√©todos de a√ß√£o em STATE
 	public void avancar(Curso curso, String nomeDisciplina, double pctAvancar);
 	public Curso.Snapshot checkpoint(Curso curso);
 	public void restore(Curso curso, Curso.Snapshot snapshot, List<Disciplina> disciplinas);
